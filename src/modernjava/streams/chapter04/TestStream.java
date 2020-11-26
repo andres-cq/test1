@@ -9,12 +9,12 @@ import java.util.stream.Stream;
 
 public class TestStream {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         List<String> title = Arrays.asList("Modern", "Java", "In", "Action");
 
         Stream<String> s = title.stream();
 
-        s.forEach(t-> System.out.println(t));
+        s.forEach(t -> System.out.println(t));
         //s.forEach(t-> System.out.println(t));
 
         List<Dish> menu = Arrays.asList(
@@ -31,7 +31,7 @@ public class TestStream {
 
         //Collections: external iteration with a for-each loop
         List<String> names = new ArrayList<>();
-        for(Dish dish:menu){
+        for (Dish dish : menu) {
             names.add(dish.getName());
         }
         System.out.println("with for-each: " + names);
@@ -39,7 +39,7 @@ public class TestStream {
         //Collections:external iteration using an iterator behind the scenes
         List<String> names2 = new ArrayList<>();
         Iterator<Dish> iterator = menu.iterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             Dish dish = iterator.next();
             names2.add(dish.getName());
         }
@@ -47,10 +47,51 @@ public class TestStream {
 
         //Streams: internal iteration
         List<String> names3 = menu.stream()
-                .map(d->d.getName())
+                .map(d -> d.getName())
                 .collect(Collectors.toList());
         System.out.println("with streams: " + names3);
 
+        /*
+        QUIZ 4.1
+         */
+        List<String> highCaloricDishes = new ArrayList<>();
+        Iterator<Dish> iterator2 = menu.iterator();
+        while (iterator2.hasNext()) {
+            Dish dish = iterator2.next();
+            if (dish.getCalories() > 300) {
+                highCaloricDishes.add(dish.getName());
+            }
+        }
+        System.out.println("high caloric iterator: " + highCaloricDishes);
 
+        //with streams()
+        List<Dish> highCaloricDishesStream = menu.stream()
+                .filter(d->d.getCalories()>300)
+                .collect(Collectors.toList());
+        System.out.println("high caloric streams: " + highCaloricDishesStream);
+
+        System.out.println("---------------");
+        List<String> highCaloricStreams = menu.stream()
+                .filter(dish->{
+                    System.out.println("filtering: " + dish.getCalories());
+                    return dish.getCalories()>300;
+                })
+                .map(dish->{
+                    System.out.println("mapping: " + dish.getName());
+                    return dish.getName();
+                }).limit(3).collect(Collectors.toList());
+
+
+        List<Dish> vegetarianDishes = menu.stream()
+                .filter(dish->dish.isVegetarian())
+                .collect(Collectors.toList());
+        System.out.println(vegetarianDishes);
+
+        System.out.println("------------------------");
+        List<Integer> numbers = Arrays.asList(1, 2, 1, 3, 3, 2, 4);
+        numbers.stream()
+                .filter(i->i%2==0)
+                .distinct()
+                .forEach(number-> System.out.println(number));
     }
 }
